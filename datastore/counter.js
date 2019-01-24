@@ -26,7 +26,6 @@ const readCounter = (callback) => {
 };
 
 const writeCounter = (count, callback) => {
-  console.log('count', count)
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
     if (err) {
@@ -50,13 +49,6 @@ exports.getNextUniqueId = (callback) => {
       callback(null, string)
     })
   })
-  const id = readCounter((err, id) => {
-    console.log(id);
-  });
-  console.log(id);
-  writeCounter(id, (err, string) => string)
-
-
 };
 
 

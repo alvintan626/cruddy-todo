@@ -82,7 +82,6 @@ describe('todos', () => {
       fs.writeFileSync(counter.counterFile, '00142');
       todos.create('buy fireworks', (err, todo) => {
         const todoExists = fs.existsSync(path.join(todos.dataDir, '00143.txt'));
-        console.log('data dir', todoExists)
         expect(todoExists).to.be.true;
         done();
       });
@@ -92,7 +91,6 @@ describe('todos', () => {
       const todoText = 'walk the dog';
       todos.create(todoText, (err, todo) => {
         const todoFileContents = fs.readFileSync(path.join(todos.dataDir, `${todo.id}.txt`)).toString();
-        console.log('herre',todoFileContents)
         expect(todoFileContents).to.equal(todoText);
         done();
       });
@@ -110,25 +108,35 @@ describe('todos', () => {
 
   describe('readAll', () => {
     it('should return an empty array when there are no todos', (done) => {
-      todos.readAll((err, todoList) => {
-        expect(err).to.be.null;
-        expect(todoList.length).to.equal(0);
+      todos.readAll()
+      .then((val) => {
+        expect(val).to.deep.equal([]);
+        expect(val.length).to.equal(0);
         done();
-      });
+      })
+      .catch((err) => {
+        done();
+      })
     });
 
     // Refactor this test when completing `readAll`
     it('should return an array with all saved todos', (done) => {
+      console.log('todos', todos)
       const todo1text = 'todo 1';
       const todo2text = 'todo 2';
-      const expectedTodoList = [{ id: '00001', text: '00001' }, { id: '00002', text: '00002' }];
+      const expectedTodoList = [{ id: '00001', text: 'todo 1' }, { id: '00002', text: 'todo 2' }];
       todos.create(todo1text, (err, todo) => {
         todos.create(todo2text, (err, todo) => {
-          todos.readAll((err, todoList) => {
-            expect(todoList).to.have.lengthOf(2);
-            expect(todoList).to.deep.include.members(expectedTodoList, 'NOTE: Text field should use the Id initially');
+          todos.readAll()
+          .catch(err => {
             done();
-          });
+          })
+          .then((val) => {
+            console.log('valll',val)
+            expect(val).to.have.lengthOf(2);
+            expect(val).to.deep.include.members(expectedTodoList, 'NOTE: Text field should use the Id initially');
+            done();
+          })
         });
       });
     });

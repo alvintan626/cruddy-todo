@@ -3,7 +3,13 @@ const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
 
-var items = {};
+var items = fs.readdir(exports.dataDir, function(err, items) {
+  if(err){
+    return err
+  }else{
+    return items
+  }
+});
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
@@ -26,20 +32,35 @@ exports.create = (text, callback) => {
   });
 };
 
-exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text:id };
-  });
-  callback(null, data);
-};
+// exports.readAll = (callback) => {
+//   var data = _.map(items, (text, id) => {
+//     return { id, text };
+//   });
+//   callback(null, data);
+// };
 
-exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+
+exports.readAll = () => {
+  return new Promise(function(resolve, reject) {
+    var data = _.map(items, (text, id) => {
+      return exports.readOne(id)
+    });
+      resolve(Promise.all(data))
+  })
+
+}
+
+
+exports.readOne = (id) => {
+  return new Promise(function(resolve, reject) {
+    var text = items[id];
+    console.log('text', text)
+    if (!text) {
+      reject(new Error(`No item with id: ${id}`));
+    } else {
+      resolve({ id, text });
+    }
+  })
 };
 
 exports.update = (id, text, callback) => {
