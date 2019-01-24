@@ -82,6 +82,7 @@ describe('todos', () => {
       fs.writeFileSync(counter.counterFile, '00142');
       todos.create('buy fireworks', (err, todo) => {
         const todoExists = fs.existsSync(path.join(todos.dataDir, '00143.txt'));
+        console.log('data dir', todoExists)
         expect(todoExists).to.be.true;
         done();
       });
@@ -91,6 +92,7 @@ describe('todos', () => {
       const todoText = 'walk the dog';
       todos.create(todoText, (err, todo) => {
         const todoFileContents = fs.readFileSync(path.join(todos.dataDir, `${todo.id}.txt`)).toString();
+        console.log('herre',todoFileContents)
         expect(todoFileContents).to.equal(todoText);
         done();
       });

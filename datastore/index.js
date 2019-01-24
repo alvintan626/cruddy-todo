@@ -8,14 +8,29 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  counter.getNextUniqueId((err, id) => {
+    if(err){
+      throw('Something went wrong');
+    }else{
+      items[id] = text;
+      //write and create a path to data dir
+      //create file with id name and text/data
+      console.log('dir',`${exports.dataDir}/${id}.txt`)
+      fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+        if(err) {
+          throw('EERR',err);
+        }else{
+          callback(null, { id, text });
+        }
+      })
+    }
+  });
+
 };
 
 exports.readAll = (callback) => {
   var data = _.map(items, (text, id) => {
-    return { id, text };
+    return { id, text:id };
   });
   callback(null, data);
 };
@@ -34,8 +49,13 @@ exports.update = (id, text, callback) => {
   if (!item) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    items[id] = text;
-    callback(null, { id, text });
+    fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+      if(err) {
+        throw('EERR',err);
+      }else{
+        callback(null, { id, text });
+      }
+    })
   }
 };
 
@@ -46,7 +66,12 @@ exports.delete = (id, callback) => {
     // report an error if item not found
     callback(new Error(`No item with id: ${id}`));
   } else {
-    callback();
+    fs.unlink(`${exports.dataDir}/${id}.txt`, (err) => {
+      if(err) {
+        throw('EERR',err);
+      }
+      callback();
+    })
   }
 };
 

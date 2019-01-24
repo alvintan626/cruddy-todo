@@ -26,11 +26,13 @@ const readCounter = (callback) => {
 };
 
 const writeCounter = (count, callback) => {
+  console.log('count', count)
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
     if (err) {
       throw ('error writing counter');
     } else {
+      console.log('COUNTER',counterString)
       callback(null, counterString);
     }
   });
@@ -38,9 +40,26 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (callback) => {
+  //create a storage equal to the counter 
+  //send the current counter number to the storage file
+  //remove old counter
+  //user readfile check to see if file is true if false
+  //make counter zero and create file 
+  //if true update file with new counter 
+  readCounter((err, id) => {
+    if (id === 0 ){
+      writeCounter(id + 1, (err, string) => {
+        callback(null, string)
+      })
+    }else{
+      writeCounter(id+1, (err, string) => {
+        callback(null, string);
+      })
+    }
+  })
+
+
 };
 
 
