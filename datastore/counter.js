@@ -32,7 +32,6 @@ const writeCounter = (count, callback) => {
     if (err) {
       throw ('error writing counter');
     } else {
-      console.log('COUNTER',counterString)
       callback(null, counterString);
     }
   });
@@ -41,23 +40,21 @@ const writeCounter = (count, callback) => {
 // Public API - Fix this function //////////////////////////////////////////////
 
 exports.getNextUniqueId = (callback) => {
-  //create a storage equal to the counter 
   //send the current counter number to the storage file
   //remove old counter
   //user readfile check to see if file is true if false
   //make counter zero and create file 
   //if true update file with new counter 
   readCounter((err, id) => {
-    if (id === 0 ){
-      writeCounter(id + 1, (err, string) => {
-        callback(null, string)
-      })
-    }else{
-      writeCounter(id+1, (err, string) => {
-        callback(null, string);
-      })
-    }
+    writeCounter(id + 1, (err, string) => {
+      callback(null, string)
+    })
   })
+  const id = readCounter((err, id) => {
+    console.log(id);
+  });
+  console.log(id);
+  writeCounter(id, (err, string) => string)
 
 
 };

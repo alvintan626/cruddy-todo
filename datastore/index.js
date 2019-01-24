@@ -15,7 +15,6 @@ exports.create = (text, callback) => {
       items[id] = text;
       //write and create a path to data dir
       //create file with id name and text/data
-      console.log('dir',`${exports.dataDir}/${id}.txt`)
       fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
         if(err) {
           throw('EERR',err);
@@ -25,7 +24,6 @@ exports.create = (text, callback) => {
       })
     }
   });
-
 };
 
 exports.readAll = (callback) => {
